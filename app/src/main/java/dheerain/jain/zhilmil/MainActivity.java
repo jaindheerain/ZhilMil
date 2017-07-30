@@ -27,37 +27,26 @@ public class MainActivity extends AppCompatActivity {
         checkFlash();
 
 
-        
+
     }
 
     void checkFlash(){
-        if(getApplicationContext().getPackageManager()
+        if(!getApplicationContext().getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)){
 
-            Snackbar.make(v, "You have flash", Snackbar.LENGTH_LONG)
+            Snackbar.make(v, "You Dont Have Flash", Snackbar.LENGTH_LONG)
                     .setAction("CLOSE", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+
+                            finish();
 
                         }
                     })
                     .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
                     .show();
+            finish();
 
         }
-        else {
-
-            Snackbar.make(v, "You Dont have flash", Snackbar.LENGTH_LONG)
-                    .setAction("CLOSE", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                                finish();
-                        }
-                    })
-                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
-                    .show();
-
-        }
-
     }
 }
