@@ -5,4 +5,19 @@ package dheerain.jain.zhilmil;
  */
 
 public class frequency {
+    int freq;
+    int milisec;
+
+    public frequency(int freq, int milisec) {
+        this.freq = freq;
+        this.milisec = milisec;
+    }
+
+    public int getFreq() {
+        return freq;
+    }
+
+    public int getMilisec() {
+        return milisec;
+    }
 }
