@@ -1,12 +1,17 @@
 package dheerain.jain.zhilmil;
 
+import android.Manifest;
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements Communicator{
     SharedPreferences.Editor editor;
     public ticker a=new ticker();
     boolean isClicked=false;
+    boolean permissionGranted;
     public static int delay=100;
     private boolean isFlashOn=false;
     private Camera.Parameters parameters;
@@ -45,7 +51,10 @@ public class MainActivity extends AppCompatActivity implements Communicator{
         powerButton= (ImageView) findViewById(R.id.switchButton);
         checkFlash();
         setArrray();
-        getCamera();
+        startProcess();
+        checkforPermission();
+            if(permissionGranted)
+                getCamera();
         powerButton.setImageResource(R.drawable.energyofff);
         sharedPreferences=getSharedPreferences("enable", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -53,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements Communicator{
         recyclerView.setVisibility(View.INVISIBLE);
         if(sharedPreferences.getBoolean("run",true)){
             intro();
-
         }
         else {
             recyclerView.setVisibility(View.VISIBLE);
@@ -102,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements Communicator{
         recyclerView.setAdapter(frequencyAdapter);
 
     }
+
 
 
 
@@ -305,5 +314,44 @@ public class MainActivity extends AppCompatActivity implements Communicator{
 
         editor.putBoolean("run",false);
         editor.apply();
+    }
+
+    private void startProcess() {
+        Intent i=new Intent(this, MyService.class);
+        i.setFlags(Service.START_STICKY);
+        startService(i);
+
+    }
+
+    private void checkforPermission() {
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.CAMERA},100);
+        }
+        else{
+            permissionGranted=true;
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==100){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                permissionGranted=true;
+                getCamera();
+
+                Log.d("TAGGER", "onRequestPermissionsResult: ");
+/*
+                AutoLoactiongiven(mService.request,mService.mGoogleApiClient);
+*/
+
+/*
+                startService(new Intent(MainActivity.this, NearByService.class));
+*/
+            }
+        }
     }
 }

@@ -23,7 +23,11 @@
             </intent-filter>
         </activity>
 
-
+        <service
+            android:name=".MyService"
+            android:enabled="true"
+            android:process=":remote"
+            android:exported="true"></service>
     </application>
 
 </manifest>
