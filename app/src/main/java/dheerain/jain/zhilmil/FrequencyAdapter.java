@@ -1,6 +1,8 @@
 package dheerain.jain.zhilmil;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +20,10 @@ public class FrequencyAdapter extends RecyclerView.Adapter<FrequencyAdapter.View
 
     ArrayList<frequency> frequencies;
     Context context;
+    AsycObj asycObj=new AsycObj();
     public FrequencyAdapter(ArrayList<frequency> frequencies,Context c) {
 
+        asycObj.refrence((Communicator) c);
         this.frequencies=frequencies;
         context=c;
     }
@@ -33,13 +37,21 @@ public class FrequencyAdapter extends RecyclerView.Adapter<FrequencyAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         holder.name.setText(frequencies.get(position).getFreq()+"hrtez Frequency");
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                reset();
+                notifyDataSetChanged();
                 MainActivity.delay=frequencies.get(position).getMilisec();
+                asycObj.startFunction();
+                if(!frequencies.get(position).isClicked())
+                    frequencies.get(position).setClicked(true);
+                else
+                    frequencies.get(position).setClicked(false);
+                notifyDataSetChanged();
             }
         });
         holder.icon.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +60,12 @@ public class FrequencyAdapter extends RecyclerView.Adapter<FrequencyAdapter.View
                 MainActivity.delay=frequencies.get(position).getMilisec();
             }
         });
-
+        if(frequencies.get(position).isClicked())
+        holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+        else{
+            holder.cardView.setCardBackgroundColor(Color.WHITE);
+        }
+//        notifyDataSetChanged();
     }
 
     @Override
@@ -60,11 +77,20 @@ public class FrequencyAdapter extends RecyclerView.Adapter<FrequencyAdapter.View
 
         TextView name;
         ImageView icon;
-
+        CardView cardView;
         public ViewHolder(View v) {
             super(v);
+            cardView= (CardView) v.findViewById(R.id.cardView);
             name = (TextView) v.findViewById(R.id.frequencies);
             icon= (ImageView) v.findViewById(R.id.icon_frequency);
+            icon.setImageResource(R.drawable.pulse);
+        }
+    }
+    void reset()
+    {
+        for(int i=0;i<frequencies.size();i++)
+        {
+            frequencies.get(i).setClicked(false);
         }
     }
 }

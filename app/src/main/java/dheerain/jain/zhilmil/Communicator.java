@@ -5,4 +5,5 @@ package dheerain.jain.zhilmil;
  */
 
 public interface Communicator {
+    void doTask();
 }

@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Communicator{
 
     ImageView powerButton;
     View v;
@@ -37,18 +37,20 @@ recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         v=findViewById(android.R.id.content);
         checkFlash();
         powerButton= (ImageView) findViewById(R.id.switchButton);
+        powerButton.setImageResource(R.drawable.lightoff);
         getCamera();
-        switchButton();
         powerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isFlashOn || isClicked){
 
+                    switchButton();
                     Toast.makeText(MainActivity.this, "ON", Toast.LENGTH_SHORT).show();
                     a.cancel(true);
                     isClicked=false;
                 }
                 else {
+                    switchButton();
                     a=new ticker();
                     a.execute();
                     isClicked=true;
@@ -160,10 +162,10 @@ recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
     }
 
     void switchButton(){
-        if(isFlashOn){
-            powerButton.setImageResource(R.mipmap.ic_launcher);
+        if(isClicked){
+            powerButton.setImageResource(R.drawable.lightoff);
         }else{
-            powerButton.setImageResource(R.mipmap.ic_launcher_round);
+            powerButton.setImageResource(R.drawable.lighton);
         }
     }
 
@@ -174,6 +176,15 @@ recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         } else { // On, turn it off
             turnOff();
         }
+    }
+
+    @Override
+    public void doTask() {
+            powerButton.setImageResource(R.drawable.lighton);
+            a.cancel(true);
+            a=new ticker();
+            a.execute();
+        isClicked=true;
     }
 
     public  class ticker extends AsyncTask<Void,Void,Void>{
@@ -210,8 +221,10 @@ recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         @Override
         protected void onStop() {
             super.onStop();
-                if (camera != null) {
-                    a.cancel(true);
+            if(!a.isCancelled())
+                a.cancel(true);
+
+            if (camera != null) {
                     isClicked=false;
                     camera.release();
                     camera = null;

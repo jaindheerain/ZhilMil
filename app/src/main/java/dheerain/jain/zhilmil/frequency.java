@@ -6,10 +6,14 @@ package dheerain.jain.zhilmil;
 
 public class frequency {
     int freq;
+
+
+    boolean clicked;
     int milisec;
 
     public frequency(int freq, int milisec) {
         this.freq = freq;
+        clicked=false;
         this.milisec = milisec;
     }
 
@@ -20,4 +24,12 @@ public class frequency {
     public int getMilisec() {
         return milisec;
     }
+    public boolean isClicked() {
+        return clicked;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
+    }
+
 }
