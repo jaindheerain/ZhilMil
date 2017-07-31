@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,9 +21,10 @@ public class MainActivity extends AppCompatActivity {
     View v;
     ArrayList<frequency> freq=new ArrayList<>();
     Camera camera;
+    RecyclerView recyclerView;
     public ticker a=new ticker();
     boolean isClicked=false;
-    public int delay=100;
+    public static int delay=100;
     private boolean isFlashOn=false;
     private Camera.Parameters parameters;
 
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         setArrray();
         v=findViewById(android.R.id.content);
         checkFlash();
@@ -54,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        FrequencyAdapter frequencyAdapter = new FrequencyAdapter(freq,this);
+        recyclerView.setAdapter(frequencyAdapter);
 
     }
 
@@ -119,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         turnOff();
-        camera.release();
     }
 
     void turnOn() {
@@ -137,11 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getCamera();
-    }
 
     void turnOff() {
         if (isFlashOn) {
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 if(isCancelled())break;
                 toggleFlashLight();
                 try {
-                    Thread.sleep(13);
+                    Thread.sleep(delay);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -209,8 +211,16 @@ public class MainActivity extends AppCompatActivity {
         protected void onStop() {
             super.onStop();
                 if (camera != null) {
+                    a.cancel(true);
+                    isClicked=false;
                     camera.release();
                     camera = null;
                 }
         }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getCamera();
+    }
 }
