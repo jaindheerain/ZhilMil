@@ -1,6 +1,7 @@
 package dheerain.jain.zhilmil;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -20,9 +21,11 @@ public class FrequencyAdapter extends RecyclerView.Adapter<FrequencyAdapter.View
 
     ArrayList<frequency> frequencies;
     Context context;
+    SharedPreferences sharedPreferences;
     AsycObj asycObj=new AsycObj();
-    public FrequencyAdapter(ArrayList<frequency> frequencies,Context c) {
+    public FrequencyAdapter(ArrayList<frequency> frequencies,Context c,SharedPreferences sharedPreferences) {
 
+        this.sharedPreferences=sharedPreferences;
         asycObj.refrence((Communicator) c);
         this.frequencies=frequencies;
         context=c;
@@ -46,6 +49,7 @@ public class FrequencyAdapter extends RecyclerView.Adapter<FrequencyAdapter.View
                 reset();
                 notifyDataSetChanged();
                 MainActivity.delay=frequencies.get(position).getMilisec();
+                if(sharedPreferences.getBoolean("key",false))
                 asycObj.startFunction();
                 if(!frequencies.get(position).isClicked())
                     frequencies.get(position).setClicked(true);

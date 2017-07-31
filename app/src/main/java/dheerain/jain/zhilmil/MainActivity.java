@@ -1,5 +1,7 @@
 package dheerain.jain.zhilmil;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -11,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,23 +25,29 @@ public class MainActivity extends AppCompatActivity implements Communicator{
     ArrayList<frequency> freq=new ArrayList<>();
     Camera camera;
     RecyclerView recyclerView;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     public ticker a=new ticker();
     boolean isClicked=false;
     public static int delay=100;
     private boolean isFlashOn=false;
     private Camera.Parameters parameters;
-
+    Switch aSwitch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
-        setArrray();
+        recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
+        aSwitch= (Switch) findViewById(R.id.aSwitch);
         v=findViewById(android.R.id.content);
-        checkFlash();
         powerButton= (ImageView) findViewById(R.id.switchButton);
-        powerButton.setImageResource(R.drawable.lightoff);
+        checkFlash();
+        setArrray();
         getCamera();
+        powerButton.setImageResource(R.drawable.energyofff);
+        sharedPreferences=getSharedPreferences("enable", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        aSwitch.setChecked(sharedPreferences.getBoolean("key",false));
         powerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,9 +69,26 @@ recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
             }
         });
 
+        aSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.putBoolean("key",aSwitch.isChecked());
+                editor.apply();
+                if(!aSwitch.isChecked()){
+                    if(!a.isCancelled()){
+                        a.cancel(true);
+                        powerButton.setImageResource(R.drawable.energyofff);
+                        isClicked=false;
+
+                    }
+                }
+
+            }
+        });
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        FrequencyAdapter frequencyAdapter = new FrequencyAdapter(freq,this);
+        FrequencyAdapter frequencyAdapter = new FrequencyAdapter(freq,this,sharedPreferences);
         recyclerView.setAdapter(frequencyAdapter);
 
     }
@@ -163,9 +189,9 @@ recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
 
     void switchButton(){
         if(isClicked){
-            powerButton.setImageResource(R.drawable.lightoff);
+            powerButton.setImageResource(R.drawable.energyofff);
         }else{
-            powerButton.setImageResource(R.drawable.lighton);
+            powerButton.setImageResource(R.drawable.energyonn);
         }
     }
 
@@ -180,7 +206,7 @@ recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
 
     @Override
     public void doTask() {
-            powerButton.setImageResource(R.drawable.lighton);
+            powerButton.setImageResource(R.drawable.energyonn);
             a.cancel(true);
             a=new ticker();
             a.execute();
