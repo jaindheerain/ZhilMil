@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
+
 public class MainActivity extends AppCompatActivity implements Communicator{
 
     ImageView powerButton;
@@ -48,6 +50,14 @@ public class MainActivity extends AppCompatActivity implements Communicator{
         sharedPreferences=getSharedPreferences("enable", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         aSwitch.setChecked(sharedPreferences.getBoolean("key",false));
+        recyclerView.setVisibility(View.INVISIBLE);
+        if(sharedPreferences.getBoolean("run",true)){
+            intro();
+
+        }
+        else {
+            recyclerView.setVisibility(View.VISIBLE);
+        }
         powerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements Communicator{
         recyclerView.setAdapter(frequencyAdapter);
 
     }
+
+
 
     private void setArrray() {
         freq.add(new frequency(10,100));
@@ -261,5 +273,37 @@ public class MainActivity extends AppCompatActivity implements Communicator{
     protected void onStart() {
         super.onStart();
         getCamera();
+    }
+
+    private void intro() {
+        new MaterialTapTargetPrompt.Builder(MainActivity.this)
+                .setTarget(findViewById(R.id.aSwitch))
+                .setPrimaryText("Enable Live Preview")
+                .setSecondaryText("Tap to enable the preview option for frequency you choose")
+                .setPromptStateChangeListener(new MaterialTapTargetPrompt.PromptStateChangeListener()
+                {
+                    @Override
+                    public void onPromptStateChanged(MaterialTapTargetPrompt prompt, int state)
+                    {
+                        if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED)
+                        {
+                            editor.putBoolean("key",aSwitch.isChecked());
+                            editor.apply();
+                            // User has pressed the prompt target
+
+                            recyclerView.setVisibility(View.VISIBLE);
+
+                        }
+                        if(state==MaterialTapTargetPrompt.STATE_DISMISSED)
+                        {
+                            recyclerView.setVisibility(View.VISIBLE);
+
+                        }
+                    }
+                })
+                .show();
+
+        editor.putBoolean("run",false);
+        editor.apply();
     }
 }

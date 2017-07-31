@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:background="@color/colorPrimary"
-    android:layout_weight="3"
+    android:layout_weight="4"
     android:layout_height="match_parent"
     android:id="@+id/relativeLayout"
     tools:context="dheerain.jain.zhilmil.MainActivity">
@@ -16,18 +16,18 @@
     android:weightSum="2"
     android:orientation="horizontal">
     <TextView
-        android:layout_weight="1.5"
+        android:layout_weight="1.2"
         android:gravity="left"
         android:paddingTop="4dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="Enable Preview Mode"
         android:textStyle="bold"
-        android:textSize="14dp"/>
+        android:textSize="16dp"/>
     <Switch
     android:layout_width="0dp"
         android:id="@+id/aSwitch"
-        android:layout_weight="0.5"
+        android:layout_weight="0.8"
     android:layout_height="wrap_content" />
 </LinearLayout>
     <ImageView
@@ -36,7 +36,7 @@
         android:layout_height="0dp"
         android:id="@+id/switchButton"
         android:layout_gravity="center"
-        android:layout_weight="1.2"
+        android:layout_weight="1.39"
         android:src="@mipmap/ic_launcher"
         />
 

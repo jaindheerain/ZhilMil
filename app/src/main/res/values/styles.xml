@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Theme.NoToolBar" parent="Theme.AppCompat.Light.NoActionBar">   <item name="android:windowIsTranslucent">false</item>
+
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimary">#737373</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="colorPrimaryDark">#737373</item></style>
 </resources>
